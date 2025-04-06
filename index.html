@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WSP ChatBot (Editable API Key)</title>
+    <title>WSP ChatBot</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css"
@@ -15,19 +15,24 @@
         padding: 10px;
         min-height: 50px;
       }
+      #response h3 {
+        color: #333;
+        font-size: 1.2em;
+      }
+      #response strong {
+        color: #d9534f;
+      }
+      #response ul {
+        padding-left: 20px;
+      }
+      #response li {
+        margin-bottom: 5px;
+      }
     </style>
   </head>
   <body>
     <div class="container">
-      <h2>🔐 WSP ChatBot (Editable Key)</h2>
-      <div class="form-group">
-        <input
-          type="text"
-          class="form-control"
-          id="apiKey"
-          placeholder="Enter your OpenRouter API Key"
-        />
-      </div>
+      <h2>Free ChatBot</h2>
       <div class="form-group">
         <input
           type="text"
@@ -43,40 +48,35 @@
     <script>
       async function sendMessage() {
         const input = document.getElementById('userInput').value;
-        const apiKey = document.getElementById('apiKey').value;
         const responseDiv = document.getElementById('response');
-        if (!input || !apiKey) {
-          responseDiv.innerHTML = 'Please enter both API Key and your message.';
+        if (!input) {
+          responseDiv.innerHTML = 'Please enter a message.';
           return;
         }
-
         responseDiv.innerHTML = 'Loading...';
 
         try {
-          const response = await fetch(
-            'https://openrouter.ai/api/v1/chat/completions',
-            {
-              method: 'POST',
-              headers: {
-                Authorization: 'Bearer ' + apiKey,
-                'HTTP-Referer': 'https://sony7575.github.io',
-                'X-Title': 'dsr1or-2025',
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                model: 'deepseek/deepseek-r1:free',
-                messages: [{ role: 'user', content: input }],
-              }),
-            }
-          );
+          const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              Authorization: 'Bearer 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',
+              'HTTP-Referer': 'https://sony7575.github.io',
+              'X-Title': 'dsr1or-2025',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'openai/gpt-3.5-turbo',
+              messages: [{ role: 'user', content: input }],
+            }),
+          });
 
           const text = await response.text();
-          console.log(text);
-          const data = JSON.parse(text);
+          console.log("Raw response:", text);
 
-          const markdownText =
-            data.choices?.[0]?.message?.content || 'No response received.';
+          const data = JSON.parse(text);
+          const markdownText = data.choices?.[0]?.message?.content || 'No response received.';
           responseDiv.innerHTML = marked.parse(markdownText);
+
         } catch (error) {
           responseDiv.innerHTML = 'Error: ' + error.message;
         }
